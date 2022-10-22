@@ -5,16 +5,29 @@ import Filter from './Filter/Filter';
 import ContactList from './ContactList/ContactList';
 import { Container, Title, Contacts, EmptyList } from './Base.styled';
 
+const LS_KEY = 'contacts';
+
 export class App extends Component {
   state = {
-    contacts: [
-      { id: nanoid(), name: 'Rosie Simpson', number: '459-12-56' },
-      { id: nanoid(), name: 'Hermione Kline', number: '443-89-12' },
-      { id: nanoid(), name: 'Eden Clements', number: '645-17-79' },
-      { id: nanoid(), name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: [],
     filter: '',
   };
+
+  componentDidMount() {
+    const savedContacts = JSON.parse(localStorage.getItem(LS_KEY));
+
+    if (savedContacts) {
+      this.setState({ contacts: savedContacts });
+    }
+  }
+
+  componentDidUpdate(_, { contacts: previousContacts }) {
+    const { contacts } = this.state;
+
+    if (previousContacts !== contacts) {
+      localStorage.setItem(LS_KEY, JSON.stringify(contacts));
+    }
+  }
 
   addContact = ({ name, number }) => {
     const { contacts } = this.state;
